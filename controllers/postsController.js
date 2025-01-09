@@ -1,21 +1,19 @@
 // * DATABASE INPORT
-const postsData = require("../data/postsData.js");
+const connection = require("../db/data.js");
 
 // # INDEX
 function index(req, res) {
-  // * variables
-  const tag = req.query.tag ?? "";
-  let filteredPost = postsData;
+  // * query
+  const sql = "SELECT * FROM posts";
 
-  // * if query exists
-  if (tag) {
-    filteredPost = postsData.filter((post) => {
-      return post.categories.includes(tag);
-    });
-  }
+  // * query call
+  connection.query(sql, (err, results) => {
+    // managing error
+    if (err) return res.status(500).json({ error: "Database query failed" });
 
-  // * output
-  res.json(filteredPost);
+    // output
+    res.json(results);
+  });
 }
 
 // # SHOW
