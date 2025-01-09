@@ -9,7 +9,14 @@ function index(req, res) {
   // * query call
   connection.query(sql, (err, results) => {
     // managing error
-    if (err) return res.status(500).json({ error: "Database query failed" });
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ error: "Database query failed" });
+    }
+
+    if (!results.length) {
+      return res.status(404).json({ error: "Not Found" });
+    }
 
     // output
     res.json(results);
