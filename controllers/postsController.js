@@ -25,26 +25,21 @@ function index(req, res) {
 
 // # SHOW
 function show(req, res) {
-  // * variable
+  // * variables
   const id = parseInt(req.params.id);
+  const sql = "SELECT * FROM posts WHERE id= ?";
 
-  // * managing error
-  if (isNaN(id)) {
-    const err = new Error("Id not valid");
-    throw err;
-  }
+  connection.query(sql, [id], (err, results) => {
+    // * managing error
+    if (isNaN(id)) {
+      console.log(err);
+      return res.status(400).json({ error: err });
+    }
 
-  // * variable
-  const post = postsData.find((post) => post.id === id);
-
-  // * managing error
-  if (!post) {
-    const err = new Error("Data not found");
-    throw err;
-  }
+    res.json(results);
+  });
 
   // * output
-  res.json(post);
 }
 
 // # STORE
@@ -132,14 +127,9 @@ function destroy(req, res) {
 
   connection.query(sql, [id], (err, respons) => {
     // * managing errors
-    if (isNaN(id)) {
-      const err = new Error("Id not valid");
-      throw err;
-    }
-
-    if (id < 0) {
-      const err = new Error("Id not found");
-      throw err;
+    if (isNaN(id) || id < 0) {
+      console.log(err);
+      return res.status(400).json({ error: err });
     }
 
     res.status(204);
