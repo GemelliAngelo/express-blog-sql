@@ -27,19 +27,33 @@ function index(req, res) {
 function show(req, res) {
   // * variables
   const id = parseInt(req.params.id);
-  const sql = "SELECT * FROM posts WHERE id= ?";
+  const sqlPost = "SELECT * FROM posts WHERE id= ?";
 
-  connection.query(sql, [id], (err, results) => {
+  connection.query(sqlPost, [id], (err, postResults) => {
     // * managing error
     if (isNaN(id)) {
       console.log(err);
       return res.status(400).json({ error: err });
     }
 
-    res.json(results);
-  });
+    let post = postResults[0];
 
-  // * output
+    const sqlTags =
+      "SELECT tags.* FROM tags INNER JOIN post_tag ON post_tag.tag_id=tags.id WHERE post_id= ?";
+
+    connection.query(sqlTags, [id], (err, tagsResults) => {
+      // * managing error
+      if (isNaN(id)) {
+        console.log(err);
+        return res.status(400).json({ error: err });
+      }
+
+      // * output
+      post.tags = tagsResults;
+
+      res.json(post);
+    });
+  });
 }
 
 // # STORE
