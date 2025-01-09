@@ -3,7 +3,7 @@ const connection = require("../db/data.js");
 
 // # INDEX
 function index(req, res) {
-  // * query
+  // * variable
   const sql = "SELECT * FROM posts";
 
   // * query call
@@ -128,33 +128,22 @@ function modify(req, res) {
 function destroy(req, res) {
   // * variables
   const id = parseInt(req.params.id);
+  const sql = "DELETE FROM posts WHERE id = ?";
 
-  // * managing errors
-  if (isNaN(id)) {
-    const err = new Error("Id not valid");
-    throw err;
-  }
+  connection.query(sql, [id], (err, respons) => {
+    // * managing errors
+    if (isNaN(id)) {
+      const err = new Error("Id not valid");
+      throw err;
+    }
 
-  if (id < 0) {
-    const err = new Error("Id not found");
-    throw err;
-  }
+    if (id < 0) {
+      const err = new Error("Id not found");
+      throw err;
+    }
 
-  // * variables
-  const deletedPost = postsData.find((post) => post.id === id);
-  const postIndex = postsData.indexOf(deletedPost);
-
-  // * managing errors
-  if (postIndex === -1) {
-    const err = new Error("Id not found");
-    throw err;
-  }
-
-  postsData.splice(postIndex, 1);
-
-  // * output
-  console.log(postsData);
-  res.status(200).json(postsData);
+    res.status(204);
+  });
 }
 
 // # EXPORTS
